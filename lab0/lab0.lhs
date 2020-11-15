@@ -78,6 +78,74 @@ Funkcja tworząca listę permutacji podanej listy. Skorzystaj z serwisu hoogle.h
 >     delete x (y:ys) = if x == y then ys else y : delete x ys
 
 Zadanie 9.
+Funkcja scalająca uporządkowane listy (z powtórzeniami).
 
->
->
+> merge :: Ord a => [a] -> [a] -> [a]
+> merge [] xs = xs
+> merge xs [] = xs
+> merge (x:xs) (y:ys) = if x < y
+>   then x : merge xs (y:ys)
+>   else y : merge (x:xs) ys
+
+Zadanie 10.
+Funkcja sortująca podaną liczbę elementów podanej listy zgodnie z algorytmem Mergesort. Przyda się tu funkcja merge z poprzedniego punktu i standardowa funkcja drop.
+
+> msortPrefix :: Ord a => Int -> [a] -> [a]
+> msortPrefix 0 xs = []
+> msortPrefix n xs = sort n (take n xs) ++ drop n xs
+>   where
+>     sort 1 xs = xs
+>     sort n xs = let halfN = n `div` 2
+>                     (ys, zs) = split halfN xs
+>       in merge (sort halfN ys) (sort (n - halfN) zs)
+>     split k ys = (take k ys, drop k ys)
+
+Zadanie 11.
+Funkcja sortująca podaną listę. Przyda się tu funkcja z poprzedniego punktu i standardowa funkcja length.
+
+> msort :: Ord a => [a] -> [a]
+> msort xs = msortPrefix (length xs) xs
+
+Zadanie 12.
+Funkcja sortująca podaną listę zgodnie z algorytmem Quicksort
+
+> qsort :: Ord a => [a] -> [a]
+> qsort [] = []
+> qsort (x:xs) = qsort [y | y <- xs, y <= x] ++ x : qsort [y | y <- xs, y > x]
+
+Zadanie 13.
+Funkcja sortująca podaną listę zgodnie z algorytmem Insertion Sort.
+
+> isort :: Ord a => [a] -> [a]
+> isort xs = isortAux xs []
+>   where
+>     isortAux []      e = e
+>     isortAux (x:xs) ys = isortAux xs (insert x ys)
+>     insert y []     = [y]
+>     insert y (z:zs) = if y <= z then y : z : zs else z : insert y zs
+
+Zadanie 14.
+Funkcja sortująca podaną listę zgodnie z algorytmem Selection Sort.
+
+> ssort :: Ord a => [a] -> [a]
+> ssort [] = []
+> ssort (x:xs) = smallest : ssort rest
+>   where
+>     (smallest, rest) = min xs x []
+>     min []     e acc = (e, acc)
+>     min (y:ys) e acc = if y < e then min ys y (e:acc) else min ys e (y:acc)
+
+Zadanie 15.
+Funkcja sprawdzająca, czy podany element występuje na liście.
+
+> elem' :: Eq a => a -> [a] -> Bool
+> elem' e []     = False
+> elem' e (x:xs) = if e == x then True else elem' e xs
+
+Zadanie 16.
+Funkcja wstawiająca podany element pomiędzy każdą parę sąsiednich elementów podanej listy.
+Np. wartością intersperse ’,’ "abcde" jest "a,b,c,d,e".
+
+> intersperse' :: a -> [a] -> [a]
+> intersperse' e []     = []
+> intersperse' e (x:xs) = x : e : intersperse' e xs
